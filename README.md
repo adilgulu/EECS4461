@@ -20,12 +20,16 @@ System performance transformations emerge from minor parameter adjustments accor
 * Faraz Akbarzadeh
 
 
-# Expected Insights
-* Understanding AI behavior in adversarial gaming environments
-* This research investigates how gaming bots and cheat detectors interact strategically
-* I am actively participating in research activities related to ethical standards in AI and ensuring fair-play mechanisms
+# Development Insights
+Our model required advanced capabilities to match AI behavior patterns with gaming dynamics since AI behaviors needed simulation of basic operation while adapting automatically to AI cheating strategies and anti-cheating detection systems. A large number of simulation algorithm modifications and precision enhancements were needed to fulfill the simulation requirements.
+
+The complexity of our project project required no alterations to either our planned model nor our original design methodology. Our team improved our strategic approach under existing parameters while working on development activities during production. The stable and consistent design and methodology framework protected our established simulation targets while safeguarding its outcome integrity.
+
+# Looking Forward
+Multiple scale-based obstacles presented the need for an advanced software solution that deals with intricate modeling requirements. The accurate assessment of AI strategies in digital ecosystems depends on our ability to address and overcome the encountered challenges since project success depends on it. Our barriers during this project will improve current work results and deliver important understanding for future simulations in advanced AI research.
 
 
 # References
 * Chen, M. (2024). AI cheating versus AI anti-cheating: A technological battle in games. Applied and Computational Engineering, 73(1), 222-227. (DOI)
 * Skinner, G., & Walmsley, T. (2019). Artificial Intelligence and Deep Learning in Video Games: A Brief Review. 2019 IEEE 4th International Conference on Computer and Communication Systems (ICCCS), 404-408. (DOI)
+* Arai, K., Deguchi, H., & Matsui, H. (n.d.). Agent-based modeling meets gaming simulation. Retrieved March 18, 2025, https://www.researchgate.net/publication/321596055_Agent-Based_Modeling_Meets_Gaming_Simulation
