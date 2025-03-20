@@ -1,0 +1,45 @@
+Boid Flocking Simulation Requirements
+
+Overview:
+This document specifies the technical and software requirements for the Boid Flocking Simulation, an implementation of Craig Reynolds's Boids flocker model using the Mesa agent-based modeling framework. In our simulation, agents (simulated birds) exhibit flocking behavior by moving toward the average position of their neighbors, aligning with their direction, and maintaining a minimum separation distance. The model leverages Mesa’s continuous space feature and uses NumPy arrays for efficient vector computations.
+
+System Requirements:
+
+Software Dependencies:
+- Python: Version 3.8 or later.
+- Mesa: An agent-based modeling framework. Recommended version: 1.13.0 or later.
+- Solara: For interactive, web-based visualizations.
+- NumPy: For numerical operations and vector representations. Recommended version: 1.23.0 or later.
+
+Installation:
+Install the required packages using pip:
+    pip install mesa==1.13.0 solara numpy==1.23.0
+
+Platform Compatibility:
+The simulation is platform-independent and can run on Windows, macOS, and Linux systems equipped with Python 3.8 or newer.
+
+Project Files and Their Roles:
+- model.py: Contains the core Boid model, setting up the continuous space, scheduling, and inter-agent interactions.
+- agents.py: Defines the Boid agent, including behaviors such as cohesion, alignment, separation, and state transitions (e.g., color changes that indicate role shifts).
+- app.py: Implements the interactive visualization using Solara, enabling real-time observation of the simulation through a web browser.
+
+Execution Instructions:
+To launch the interactive simulation, run the following command from the project directory:
+    solara run app.py
+This command will open a browser page displaying the simulation environment, where agents are visualized according to their states:
+    - Black agents: Regular human users.
+    - Blue agents: AI cheat detectors.
+    - Green agents: Cheaters.
+    - Red agents: Cheaters that have been flagged.
+
+Further Reading and Context:
+For more background on the boids flocking model and its applications in simulating natural systems, visit:
+    https://cs.stanford.edu/people/eroberts/courses/soco/projects/2008-09/modeling-natural-systems/boids.html
+
+Specific Considerations for Our Simulation:
+Our simulation extends the classic boids model by incorporating state transitions to mimic a dynamic media ecosystem:
+    - Color-Coded Roles: Agents change colors to reflect different roles and states (e.g., cheaters evolve from green to red upon detection).
+    - Adaptive Behavior: The simulation captures emergent dynamics, such as cheat bots adapting their strategies to evade AI cheat detectors.
+    - Continuous Space Dynamics: By using Mesa’s continuous space, our simulation accurately represents spatial interactions without boundary constraints, closely mirroring real-world online environments.
+
+This requirements document ensures that all necessary software components are installed and the simulation environment is configured correctly to run the Boid Flocking Simulation effectively.
