@@ -32,4 +32,4 @@ Multiple scale-based obstacles presented the need for an advanced software solut
 # References
 * Chen, M. (2024). AI cheating versus AI anti-cheating: A technological battle in games. Applied and Computational Engineering, 73(1), 222-227. (DOI)
 * Skinner, G., & Walmsley, T. (2019). Artificial Intelligence and Deep Learning in Video Games: A Brief Review. 2019 IEEE 4th International Conference on Computer and Communication Systems (ICCCS), 404-408. (DOI)
-* Arai, K., Deguchi, H., & Matsui, H. (n.d.). Agent-based modeling meets gaming simulation. Retrieved March 18, 2025, https://www.researchgate.net/publication/321596055_Agent-Based_Modeling_Meets_Gaming_Simulation
+* Arai, K., Deguchi, H., & Matsui, H. (n.d.). Agent-based modeling meets gaming simulation. Retrieved March 18, 2025
