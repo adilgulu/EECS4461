@@ -6,7 +6,6 @@ A rapid evolution of Artificial Intelligence systems transforms media ecosystems
 The complex environment triggers AI cheating programs to create new detection evasion methods that push anti-cheat systems to develop countermeasures. The competitive nature of this system creates both technological complexity and severe consequences for user trust together with system reliability. Security precautions applied to extreme levels create problems for honest users while relaxed systems make it easier for players to cheat resulting in damages to virtual fairness principles.
 
 Agent-Based Modeling (ABM) serves as the analysis method which uses virtual simulations to study self-ruled agents interacting in digital environments. Each agent receives colour designation according to their assigned role:
-<br>
 * **Black agents:** represent regular human users, embodying the expected, rule-based behavior of typical online users.<br>
 * **Blue agents:** represent the AI cheat detectors, whose role is to monitor and flag anomalous behaviors.<br>
 * **Green agents:** represent cheaters, mimicking individuals or entities that deviate from normal behavior by exploiting vulnerabilities or engaging in unethical actions.<br>
