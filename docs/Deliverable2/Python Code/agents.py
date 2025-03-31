@@ -1,29 +1,15 @@
-"""A Boid (bird-oid) agent for implementing Craig Reynolds's Boids flocking model.
-
-This implementation uses numpy arrays to represent vectors for efficient computation
-of flocking behavior.
+"""
+A Boid (bird-oid) agent for a slither.io–like simulation.
+Uses numpy arrays to represent vectors for efficient movement and interaction.
 """
 
 import numpy as np
-import random as rd 
+import random as rd
 
 from mesa.experimental.continuous_space import ContinuousSpaceAgent
 
 
 class Boid(ContinuousSpaceAgent):
-    """A Boid-style flocker agent.
-
-    The agent follows three behaviors to flock:
-        - Cohesion: steering towards neighboring agents
-        - Separation: avoiding getting too close to any other agent
-        - Alignment: trying to fly in the same direction as neighbors
-
-    Boids have a vision that defines the radius in which they look for their
-    neighbors to flock with. Their speed (a scalar) and direction (a vector)
-    define their movement. Separation is their desired minimum distance from
-    any other Boid.
-    """
-
     def __init__(
         self,
         model,
@@ -36,58 +22,64 @@ class Boid(ContinuousSpaceAgent):
         cohere=0.03,
         separate=0.015,
         match=0.05,
-        color="blue", 
-        timeout=0, 
+        color="blue",
+        timeout=0,
+        in_burst=False,
+        burst_timer=0,
+        score=0,
+        growth_rate=0,
     ):
-        """Create a new Boid flocker agent.
-
-        Args:
-            model: Model instance the agent belongs to
-            speed: Distance to move per step
-            direction: numpy vector for the Boid's direction of movement
-            vision: Radius to look around for nearby Boids
-            separation: Minimum distance to maintain from other Boids
-            cohere: Relative importance of matching neighbors' positions (default: 0.03)
-            separate: Relative importance of avoiding close neighbors (default: 0.015)
-            match: Relative importance of matching neighbors' directions (default: 0.05)
-        """
+        """Initialize the agent and record its original type via initial_color."""
         super().__init__(space, model)
-        self.position = position
+        self.initial_color = color  # "blue" for cop, "green" for cheater, "black" for regular player.
+        self.color = color
+        self.position = np.array(position, dtype=float)
         self.speed = speed
-        self.direction = direction
+        self.direction = np.array(direction, dtype=float)
         self.vision = vision
         self.separation = separation
         self.cohere_factor = cohere
         self.separate_factor = separate
         self.match_factor = match
         self.neighbors = []
-        self.color = color
         self.timeout = timeout
+        self.in_burst = in_burst
+        self.burst_timer = burst_timer
+        self.score = score
+        self.prev_score = score  # Store previous score for growth rate calculation.
+        self.to_remove = False
+        self.flagged = False
+        self.flagged_duration = 0  # Number of consecutive steps flagged
+        self.growth_rate = growth_rate
 
     def step(self):
-        """Get the Boid's neighbors, compute the new vector, and move accordingly."""
-        if self.color == "black" or self.color == "green" or self.color == "red":
-            # --- The original flocking logic ---
+        old_score = self.score
+
+        # --- Pellet Consumption & Survival ---
+        # Only non-blue agents (regular and cheaters) gain score.
+        self.score += 0.1  # Constant survival increment
+        if rd.random() < 0.1:
+            pellet_score = rd.random() * 6 / 10
+            if self.color != "blue":
+                self.score += pellet_score
+
+        # --- Behavior for Regular Players (black) ---
+        if self.color == "black":
             neighbors, distances = self.get_neighbors_in_radius(radius=self.vision)
             self.neighbors = [n for n in neighbors if n is not self]
-            self.blue_neighbors = [n for n in neighbors if (n is not self and n.color=="blue")]
-            if len(self.blue_neighbors) > 0: 
-                if self.color=="green":
-                    self.timeout += 1
-                    if self.timeout >= 10:
-                        self.color="red"
-                if self.color=="red":
-                    self.timeout += 1
-                    if self.timeout >= 35:
-                        self.color="white" #removes the agent by turning it white!
-
-            # If no neighbors, just move forward
+            collision_distance = 0.3  # adjust as needed
+            for n, d in zip(neighbors, distances):
+                if d < collision_distance and n.score > self.score:
+                    # Regular player eliminated on collision with a higher-scoring agent.
+                    self.to_remove = True
+                    self.model.eliminated_regular_count += 1
+                    return  # Terminate step; no further updates.
             if not neighbors:
                 self.position += self.direction * self.speed
+                self.growth_rate = self.score - old_score
+                self.prev_score = self.score
                 return
-
             delta = self.space.calculate_difference_vector(self.position, agents=neighbors)
-
             cohere_vector = delta.sum(axis=0) * self.cohere_factor
             separation_vector = (
                 -1 * delta[distances < self.separation].sum(axis=0) * self.separate_factor
@@ -95,25 +87,72 @@ class Boid(ContinuousSpaceAgent):
             match_vector = (
                 np.asarray([n.direction for n in neighbors]).sum(axis=0) * self.match_factor
             )
-
-            # Update direction based on the three behaviors
             self.direction += (cohere_vector + separation_vector + match_vector) / len(neighbors)
-            # Normalize direction vector
-            self.direction /= np.linalg.norm(self.direction)
+            norm = np.linalg.norm(self.direction)
+            if norm:
+                self.direction /= norm
+            self.position += self.direction * self.speed
 
-            # Move boid
+        # --- Behavior for Cheaters (green) or Flagged Cheaters (red) ---
+        elif self.color in ("green", "red"):
+            neighbors, distances = self.get_neighbors_in_radius(radius=self.vision)
+            self.neighbors = [n for n in neighbors if n is not self]
+            if not neighbors:
+                self.position += self.direction * self.speed
+                self.growth_rate = self.score - old_score
+                self.prev_score = self.score
+                return
+            delta = self.space.calculate_difference_vector(self.position, agents=neighbors)
+            cohere_vector = delta.sum(axis=0) * self.cohere_factor
+            separation_vector = (
+                -1 * delta[distances < self.separation].sum(axis=0) * self.separate_factor
+            )
+            match_vector = (
+                np.asarray([n.direction for n in neighbors]).sum(axis=0) * self.match_factor
+            )
+            self.direction += (cohere_vector + separation_vector + match_vector) / len(neighbors)
+            norm = np.linalg.norm(self.direction)
+            if norm:
+                self.direction /= norm
             self.position += self.direction * self.speed
-        elif self.color=="white":
-            self.color = rd.choice(["green", "black", "white"])  #randomly brings back, or "spawns" new players. 
-            self.timeout=0
-            self.position=self.model.rng.random(size=(2,)) * self.space.size
-        else:
-            # --- "Blue" boids: random wandering example ---
-            # Generate a random direction
+            # Cheat bots get a bonus to simulate their unfair advantage.
+            self.score += 0.5
+            if not self.flagged:
+                self.flagged_duration = 0
+
+        # --- Behavior for Cops/Detectors (blue) ---
+        elif self.color == "blue":
+            growth_threshold = 0.6         # Rate of score increase that is considered "odd"
+            flag_duration_threshold = 5    # Steps to wait before removal
+            neighbors, distances = self.get_neighbors_in_radius(radius=self.vision)
+            min_flagging_score = 20
+            for n in neighbors:
+                if n.growth_rate > growth_threshold and n.score > min_flagging_score:
+                    # If they're suspicious, flag them.
+                    if not n.flagged:
+                        n.flagged = True
+                        n.flagged_duration = 1
+                        n.color = "red"  # Show flagged color
+                    else:
+                        # Only increment if not already marked for removal.
+                        if not n.to_remove:
+                            n.flagged_duration += 1
+                            if n.flagged_duration >= flag_duration_threshold:
+                                if n.initial_color == "black":
+                                    self.model.eliminated_regular_count += 1
+                                elif n.initial_color == "green":
+                                    self.model.eliminated_cheater_count += 1
+                                n.to_remove = True
+
+            # Random wandering for cops.
             random_dir = np.random.uniform(-1, 1, 2)
-            # Normalize it
-            random_dir /= np.linalg.norm(random_dir)
-            # Assign to boid's direction
+            norm = np.linalg.norm(random_dir)
+            if norm:
+                random_dir /= norm
             self.direction = random_dir
-            # Move
             self.position += self.direction * self.speed
+
+        # --- Update Growth Rate ---
+        if not self.to_remove:
+            self.growth_rate = self.score - old_score
+            self.prev_score = self.score
