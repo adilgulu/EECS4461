@@ -1,6 +1,7 @@
 # EECS4461: AI Undercover
 
 # Overview:
+## Game Environment
 A rapid evolution of Artificial Intelligence systems transforms media ecosystems as well as redefines basic ways people interact digitally. AI systems and their detection technologies continuously confront each other in an ongoing battle which remarkably shows the shifting nature of technology. AI systems which interact with one another represent an operational pattern where intelligent programs create adaptive procedures that reply to changes made by other programs while they cause important digital security concerns.
 
 The complex environment triggers AI cheating programs to create new detection evasion methods that push anti-cheat systems to develop countermeasures. The competitive nature of this system creates both technological complexity and severe consequences for user trust together with system reliability. Security precautions applied to extreme levels create problems for honest users while relaxed systems make it easier for players to cheat resulting in damages to virtual fairness principles.
